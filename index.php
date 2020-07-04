@@ -2,6 +2,7 @@
 
 require_once __DIR__ . "/vendor/autoload.php";
 //mongodb://su:qwer+123@api.data.shalangzhen.cn
+//fneifneofe
 
 
 class PropagationModel extends \MongoDB\Collection
