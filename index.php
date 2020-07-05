@@ -1,7 +1,14 @@
 <?php
 
 require_once __DIR__ . '/BaseModel.php';
+date_default_timezone_set('Asia/Shanghai');
 //mongodb://su:qwer+123@api.data.shalangzhen.cn
+/**
+ * 全表 更新 propagation 字段
+ * @param array $arr
+ * @param int $total
+ * @return int
+ */
 function update($arr=[], $total=0)
 {
     print date('H:i:s') . " ...new start done " . $total . PHP_EOL;
@@ -57,9 +64,25 @@ function update($arr=[], $total=0)
         return update($arr, $i);
     }
 }
+
+/**
+ * delete promotion lte 19 number data
+ */
+function remove()
+{
+    $selectTime = new \MongoDB\BSON\UTCDateTime(strtotime('2020-06-19 23:59:59') * 1000);
+    $propagationModel = PropagationModel::onInstance()->countDocuments(['time' => ['$gte' => $selectTime]]);
+//    $res = $propagationModel->countDocuments();
+    var_dump($propagationModel);
+}
+
+echo remove() ."\n";
+exit();
+
 file_put_contents('current_time.txt', date('Y-m-d H:i:s') ." start time \n", FILE_APPEND);
 $res = update();
 file_put_contents('current_time.txt', date('Y-m-d H:i:s') ." end time \n", FILE_APPEND);
 print PHP_EOL;
 
 var_dump($res);
+

@@ -19,6 +19,11 @@ class BaseModel extends \MongoDB\Collection
         $manager = (new \MongoDB\Client($this->connection));
         parent::__construct($manager->getManager(), $this->databaseName, $this->collectionName);
     }
+
+    public static function onInstance()
+    {
+        return new static;
+    }
 }
 
 class PropagationModel extends BaseModel
