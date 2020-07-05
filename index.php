@@ -30,14 +30,11 @@ function update($arr=[], $total=0)
             {
                 $id = $item['id'];
                 try {
-                    $propagationModel->updateOne(['_id' => $id], ['$set' => ['counters' => $propagationNum]]);
+                    $propagationModel->updateOne(['_id' => $id], ['$set' => ['propagation' => $propagationNum]]);
                     $propagationNum += 1;
                 }catch (\Exception $exception)
                 {
                     $err[] = $activity;
-                    print $activity . PHP_EOL;
-                    print 0001;
-                    print PHP_EOL;
                     break;
                 }
             }
