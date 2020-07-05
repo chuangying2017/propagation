@@ -1,20 +1,7 @@
 <?php
 
-require_once __DIR__ . "/vendor/autoload.php";
+require_once __DIR__ . '/BaseModel.php';
 //mongodb://su:qwer+123@api.data.shalangzhen.cn
-//fneifneofe
-
-
-class PropagationModel extends \MongoDB\Collection
-{
-    protected $collectionName = 'promotion';
-    public function __construct()
-    {
-        $manager = (new \MongoDB\Client('mongodb://su:qwer+123@api.data.shalangzhen.cn'));
-        parent::__construct($manager->getManager(), 'datacenter', $this->collectionName);
-    }
-}
-
 function update($arr=[], $total=0)
 {
     print date('H:i:s') . " ...new start done " . $total . PHP_EOL;
@@ -73,9 +60,9 @@ function update($arr=[], $total=0)
         return update($arr, $i);
     }
 }
-file_put_contents('current_time.txt', date('H:i:s') ." start time \n", FILE_APPEND);
+file_put_contents('current_time.txt', date('Y-m-d H:i:s') ." start time \n", FILE_APPEND);
 $res = update();
-file_put_contents('current_time.txt', date('H:i:s') ." end time \n", FILE_APPEND);
+file_put_contents('current_time.txt', date('Y-m-d H:i:s') ." end time \n", FILE_APPEND);
 print PHP_EOL;
 
 var_dump($res);
