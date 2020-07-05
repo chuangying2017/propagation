@@ -6,8 +6,8 @@
  * Time: 22:24
  */
 require_once  __DIR__ . "/loadConfig.php";
-define('DATABASE_NAME',"product");
-define('HOST',"mongodb://192.168.56.34");
+define('DATABASE_NAME',"datacenter");
+define('HOST',"mongodb://su:qwer+123@api.data.shalangzhen.cn");
 
 class BaseModel extends \MongoDB\Collection
 {

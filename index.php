@@ -71,12 +71,12 @@ function update($arr=[], $total=0)
 function remove()
 {
     $selectTime = new \MongoDB\BSON\UTCDateTime(strtotime('2020-06-19 23:59:59') * 1000);
-    $propagationModel = PropagationModel::onInstance()->countDocuments(['time' => ['$gte' => $selectTime]]);
+    $propagationModel = PropagationModel::onInstance()->countDocuments(['time' => ['$lte' => $selectTime]]);
 //    $res = $propagationModel->countDocuments();
     var_dump($propagationModel);
 }
 
-echo remove() ."\n";
+remove() ."\n";
 exit();
 
 file_put_contents('current_time.txt', date('Y-m-d H:i:s') ." start time \n", FILE_APPEND);
