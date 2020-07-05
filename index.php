@@ -38,7 +38,7 @@ function update($arr=[], $total=0)
                     print $activity . PHP_EOL;
                     print 0001;
                     print PHP_EOL;
-                    continue;
+                    break;
                 }
             }
             $arr[] = $activity;
