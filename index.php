@@ -10,31 +10,23 @@ class PropagationModel extends \MongoDB\Collection
     protected $collectionName = 'promotion';
     public function __construct()
     {
-        $manager = (new \MongoDB\Client('mongodb://192.168.56.33'));
+        $manager = (new \MongoDB\Client('mongodb://su:qwer+123@api.data.shalangzhen.cn'));
         parent::__construct($manager->getManager(), 'datacenter', $this->collectionName);
     }
 }
 
-function update($id='', $total=0)
+function update($arr=[], $total=0)
 {
     print date('H:i:s') . " ...new start done " . $total . PHP_EOL;
     $propagationModel = new PropagationModel();
     $pipeline = [
-        array('$group'      => array('_id' => '$activity_id', 'total'=> array('$sum'=>1),
-            'promotions' => array('$push' => ['id'=>'$_id','activity_id'=>'$activity_id','time'=>'$time']))),
-        array('$unwind'     => array('path' => '$promotions', 'includeArrayIndex' => 'counter')),
-        array('$project'    => array(
-            '_id'               => '$promotions.id',
-            'counter'           => array('$add' => array('$counter', 1 )),
-            'activity_id'       => '$promotions.activity_id',
-            'time'              => '$promotions.time',
-        ) ),
-        array('$sort' => ['_id' => 1]),
-        array('$limit' => 3000)
+        ['$sort' => ['time' => 1]],
+        ['$group' => ['_id'=>'$activity_id', 'arr' => ['$push'=>['id'=>'$_id']]]],
+        ['$limit' => 3000]
     ];
-    if (!empty($id))
+    if (!empty($arr))
     {
-        array_unshift($pipeline, ['$match' => ['_id'=> ['$gt' => $id]]]);
+        array_unshift($pipeline, ['$match' => ['activity_id' => ['$not' => ['$in' => $arr]]]]);
     }
     $res = $propagationModel->aggregate(
         $pipeline,
@@ -43,18 +35,26 @@ function update($id='', $total=0)
             'readPreference' => new \MongoDB\Driver\ReadPreference(\MongoDB\Driver\ReadPreference::PRIMARY)
         ]);
     $i = 0;
-    unset($id);
     foreach ($res as $value)
     {
-            $id = $value['_id'];
-            try {
-                $propagationModel->updateOne(['_id' => $id], ['$set' => ['counters' => $value['counter']]]);
-            }catch (\Exception $exception)
+            $propagationNum = 1;
+            $activity = $value->_id;//获取优惠券id
+            foreach ($value->arr as $item)
             {
-                print 000;
-                print PHP_EOL;
-                continue;
+                $id = $item['id'];
+                try {
+                    $propagationModel->updateOne(['_id' => $id], ['$set' => ['counters' => $propagationNum]]);
+                    $propagationNum += 1;
+                }catch (\Exception $exception)
+                {
+                    $err[] = $activity;
+                    print $activity . PHP_EOL;
+                    print 0001;
+                    print PHP_EOL;
+                    continue;
+                }
             }
+            $arr[] = $activity;
             $i += 1;
             if ($i % 100 == 0)
             {
@@ -64,17 +64,18 @@ function update($id='', $total=0)
 
     if ($i<1)
     {
+        file_put_contents('error.txt',isset($err) ? json_encode($err) : 0);
         return $i;
     }
 
-    if (isset($id))
+    if (!empty($arr))
     {
-        return update($id, $i);
+        return update($arr, $i);
     }
 }
-
+file_put_contents('current_time.txt', date('H:i:s') ." start time \n", FILE_APPEND);
 $res = update();
-
+file_put_contents('current_time.txt', date('H:i:s') ." end time \n", FILE_APPEND);
 print PHP_EOL;
 
 var_dump($res);
